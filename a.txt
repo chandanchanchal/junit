@@ -47,3 +47,12 @@ void exceptionTesting() {
     Throwable exception = assertThrows(IllegalArgumentException.class, () -> user.setAge("23"));
     assertEquals("Age must be an Integer.", exception.getMessage());
 }
+=====================================================
+@Test
+void groupedAssertions() {
+    Address address = new Address();
+    assertAll("address name",
+        () -> assertEquals("John", address.getFirstName()),
+        () -> assertEquals("User", address.getLastName())
+    );
+}
