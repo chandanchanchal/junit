@@ -38,3 +38,184 @@ public class Calculator {
         return a * b;
     }
 }
+==================================================================================
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@Test
+void exceptionTesting() {
+    // set up user
+    Throwable exception = assertThrows(IllegalArgumentException.class, () -> user.setAge("23"));
+    assertEquals("Age must be an Integer.", exception.getMessage());
+}
+=====================================================
+@Test
+void groupedAssertions() {
+    Address address = new Address();
+    assertAll("address name",
+        () -> assertEquals("John", address.getFirstName()),
+        () -> assertEquals("User", address.getLastName())
+    );
+}
+==========================================
+import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static java.time.Duration.ofSeconds;
+import static java.time.Duration.ofMinutes;
+
+@Test
+void timeoutNotExceeded() {
+    assertTimeout(ofMinutes(1), () -> service.doBackup());
+}
+
+// if you have to check a return value
+@Test
+void timeoutNotExceededWithResult() {
+    String actualResult = assertTimeout(ofSeconds(1), () -> {
+        return restService.request(request);
+    });
+    assertEquals(200, request.getStatus());
+}
+--------------------------------------------------@BeforeALL----------------------------------------------
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+ 
+@RunWith(JUnitPlatform.class)
+public class BeforeAllTest {
+ 
+    @DisplayName("Add operation test")
+    @RepeatedTest(5)
+    void addNumber(TestInfo testInfo, RepetitionInfo repetitionInfo) {
+        System.out.println("Running test -> " + repetitionInfo.getCurrentRepetition());
+        Assertions.assertEquals(2, Calculator.add(1, 1), "1 + 1 should equal 2");
+    }
+     
+    @BeforeAll
+    public static void init(){
+        System.out.println("Before All init() method called");
+    }
+}
+-------------------------------------------------------------@BeforeEach------------------------------------------
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+ 
+@RunWith(JUnitPlatform.class)
+public class BeforeEachTest {
+ 
+    @DisplayName("Add operation test")
+    @RepeatedTest(5)
+    void addNumber(TestInfo testInfo, RepetitionInfo repetitionInfo) {
+        System.out.println("Running test -> " + repetitionInfo.getCurrentRepetition());
+        Assertions.assertEquals(2, Calculator.add(1, 1), "1 + 1 should equal 2");
+    }
+     
+    @BeforeAll
+    public static void init(){
+        System.out.println("BeforeAll init() method called");
+    }
+     
+    @BeforeEach
+    public void initEach(){
+        System.out.println("BeforeEach initEach() method called");
+    }
+}
+
+__--------------------------------------------------------------------------@AfterEach-------------------------------------------------------------------
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+ 
+@RunWith(JUnitPlatform.class)
+public class AfterAnnotationsTest {
+ 
+    @DisplayName("Add operation test")
+    @RepeatedTest(5)
+    void addNumber(TestInfo testInfo, RepetitionInfo repetitionInfo) 
+    {
+        System.out.println("Running test -> " + repetitionInfo.getCurrentRepetition());
+        Assertions.assertEquals(2, Calculator.add(1, 1), "1 + 1 should equal 2");
+    }
+     
+    @AfterAll
+    public static void cleanUp(){
+        System.out.println("After All cleanUp() method called");
+    }
+     
+    @AfterEach
+    public void cleanUpEach(){
+        System.out.println("After Each cleanUpEach() method called");
+    }
+}
+------------------------------------------------@Disabled------------------------------------
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+ 
+@Disabled
+public class AppTestDisabled {
+     
+    @Test
+    void testOnDev() 
+    {
+        System.setProperty("ENV", "DEV");
+        Assumptions.assumeFalse("DEV".equals(System.getProperty("ENV")));
+    }
+     
+    @Test
+    void testOnProd() 
+    {
+        System.setProperty("ENV", "PROD");
+        Assumptions.assumeFalse("DEV".equals(System.getProperty("ENV")));
+    }
+}
+
+
+-------------------------------------------------Expected Exception--------------------------
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+ 
+public class AppTestException {
+ 
+  @Test
+  void testExpectedException() {
+ 
+    Assertions.assertThrows(NumberFormatException.class, () -> {
+      Integer.parseInt("One");
+    });
+  }
+ 
+  @Test
+  void testExpectedExceptionWithSuperType() {
+ 
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      Integer.parseInt("One");
+    });
+  }
+   
+  @Test
+  void testExpectedExceptionFail() {
+ 
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      Integer.parseInt("1");
+    });
+  }
+ 
+}
