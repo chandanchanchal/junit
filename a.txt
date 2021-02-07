@@ -409,3 +409,27 @@ public class SameClassDataProvider
         System.out.println("Data is: " + data);
     }
 }
+----------------------------------------------Dataprovider-split-in-classes--------
+import org.testng.annotations.DataProvider;
+ 
+public class DataProviderClass 
+{
+    @DataProvider(name = "data-provider")
+    public static Object[][] dataProviderMethod() 
+    {
+        return new Object[][] { { "data one" }, { "data two" } };
+    }
+}
+
+
+import org.testng.annotations.Test;
+ 
+public class TestClass 
+{
+    @Test(dataProvider = "data-provider", dataProviderClass = DataProviderClass.class)
+    public void testMethod(String data) 
+    {
+        System.out.println("Data is: " + data);
+    }
+}
+
