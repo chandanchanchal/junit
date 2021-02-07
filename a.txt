@@ -219,3 +219,71 @@ public class AppTestException {
   }
  
 }
+----------------------------------------------AssumeFalse------------------------------
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+
+public class AppTestAssumeFalse {
+	@Test
+    void testOnDev() 
+    {
+        System.setProperty("ENV", "DEV");
+        Assumptions.assumeFalse("DEV".equals(System.getProperty("ENV")), AppTestAssumeFalse::message);
+      //remainder of test will be aborted
+    }
+     
+    @Test
+    void testOnProd() 
+    {
+        System.setProperty("ENV", "PROD");
+        Assumptions.assumeFalse("DEV".equals(System.getProperty("ENV")));
+      //remainder of test will proceed
+         
+    }
+     
+    private static String message () {
+        return "TEST Execution Failed :: ";
+    }
+}
+------------------------------------------------------AssumeTrue-------------------------------
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
+
+public class AppTestAssumeTrue {
+    @Test
+    void testOnDev() 
+    {
+        System.setProperty("ENV", "DEV");
+        Assumptions.assumeTrue("DEV".equals(System.getProperty("ENV")));
+        //remainder of test will proceed
+    }
+     
+    @Test
+    void testOnProd() 
+    {
+        System.setProperty("ENV", "PROD");
+        Assumptions.assumeTrue("DEV".equals(System.getProperty("ENV")), AppTestAssumeTrue::message);
+        //remainder of test will be aborted
+    }
+     
+    private static String message () {
+        return "TEST Execution Failed :: ";
+    }
+}
