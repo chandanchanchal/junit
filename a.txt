@@ -454,4 +454,37 @@ public class SimpleTest
     }
 }
  
+--------------------------------------------Factory-with-parameter------------------------------
+import org.testng.annotations.Test;
+public class SimpleTest1
+{
+    private int param;
+ 
+    public SimpleTest1(int param) {
+        this.param = param;
+    }
+ 
+    @Test
+    public void testMethodOne() {
+        int opValue = param + 1;
+        System.out.println("Test method one output: " + opValue);
+    }
+ 
+    @Test
+    public void testMethodTwo() {
+        int opValue = param + 2;
+        System.out.println("Test method two output: " + opValue);
+    }
+}
+
+import org.testng.annotations.Factory;
+import org.testng.annotations.Test;
+public class SimpleTestFactory1 {
+	
+    @Factory
+    public Object[] factoryMethod() {
+        return new Object[] { new SimpleTest1(0), new SimpleTest1(1) };
+    }
+
+}
 
