@@ -186,3 +186,36 @@ public class AppTestDisabled {
         Assumptions.assumeFalse("DEV".equals(System.getProperty("ENV")));
     }
 }
+
+
+-------------------------------------------------Expected Exception--------------------------
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+ 
+public class AppTestException {
+ 
+  @Test
+  void testExpectedException() {
+ 
+    Assertions.assertThrows(NumberFormatException.class, () -> {
+      Integer.parseInt("One");
+    });
+  }
+ 
+  @Test
+  void testExpectedExceptionWithSuperType() {
+ 
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      Integer.parseInt("One");
+    });
+  }
+   
+  @Test
+  void testExpectedExceptionFail() {
+ 
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      Integer.parseInt("1");
+    });
+  }
+ 
+}
