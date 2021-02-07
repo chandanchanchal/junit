@@ -96,7 +96,7 @@ public class BeforeAllTest {
     }
      
     @BeforeAll
-    public  void init(){
+    public static void init(){
         System.out.println("Before All init() method called");
     }
 }
