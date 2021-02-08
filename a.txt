@@ -516,4 +516,80 @@ public class TimeoutSuite
   </test>
 </suite>
 
+----------------------parameterization------------------------------------------
 
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+ 
+public class ParameterTest {
+    /**
+     * Following method takes one parameter as input. Value of the 
+     * said parameter is defined at suite level.
+     */
+    @Parameters({ "suite-param" })
+    @Test
+    public void prameterTestOne(String param) {
+        System.out.println("Test one suite param is: " + param);
+    }
+ 
+    /**
+     * Following method takes one parameter as input. Value of the
+     * said parameter is defined at test level.
+     */
+    @Parameters({ "test-two-param" })
+    @Test
+    public void prameterTestTwo(String param) {
+        System.out.println("Test two param is: " + param);
+    }
+ 
+    /**
+     * Following method takes two parameters as input. Value of the 
+     * test parameter is defined at test level. The suite level 
+     * parameter is overridden at the test level.
+     */
+    @Parameters({ "suite-param", "test-three-param" })
+    @Test
+    public void prameterTestThree(String param, String paramTwo) {
+        System.out.println("Test three suite param is: " + param);
+        System.out.println("Test three param is: " + paramTwo);
+    }
+}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Parameter test Suite" verbose="1">
+    <!-- This parameter will be passed to every test in this suite -->
+    <parameter name="suite-param" value="suite level parameter" />
+    <test name="Parameter Test one">
+        <classes>
+            <class name="ParameterTest">
+                <methods>
+                    <include name="prameterTestOne" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Parameter Test two">
+        <!-- This parameter will be passed this test only -->
+        <parameter name="test-two-param" value="Test two parameter" />
+        <classes>
+            <class name="ParameterTest">
+                <methods>
+                    <include name="prameterTestTwo" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Parameter Test three">
+        <!-- Overriding suite level parameter -->
+        <parameter name="suite-param" value="overiding suite parameter" />
+        <!-- Test specific parameter -->
+        <parameter name="test-three-param" value="test three parameter" />
+        <classes>
+            <class name="ParameterTest">
+                <methods>
+                    <include name="prameterTestThree" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
