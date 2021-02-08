@@ -287,3 +287,596 @@ public class AppTestAssumeTrue {
         return "TEST Execution Failed :: ";
     }
 }
+---------------------------------------------TestNG--env-check---------------\
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+public class TestNG {
+    @Test
+    public void f() {
+    }
+ 
+    @BeforeTest
+    public void beforeTest() {
+    }
+ 
+    @AfterTest
+    public void afterTest() {
+    }
+}
+-----------------------testNG-expectedexception------------------------
+import java.io.IOException;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+public class ExceptionTestDemo 
+{
+    @Test(expectedExceptions = { IOException.class })
+    public void exceptionTestOne() throws Exception {
+        throw new IOException();
+    }
+ 
+    @Test(expectedExceptions = { IOException.class, NullPointerException.class })
+    public void exceptionTestTwo() throws Exception {
+        throw new Exception();
+    }
+}
+-------------------------------------expectedexception--with message---------
+import java.io.IOException;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+public class ExceptionTestDemo1
+{
+    @Test(expectedExceptions = { IOException.class }, expectedExceptionsMessageRegExp = "Pass Message test")
+    public void exceptionTestOne() throws Exception {
+        throw new IOException("Pass Message test");
+    }
+ 
+    @Test(expectedExceptions = { IOException.class }, expectedExceptionsMessageRegExp = ".* Message .*")
+    public void exceptionTestTwo() throws Exception {
+        throw new IOException("Pass Message test");
+    }
+ 
+    @Test(expectedExceptions = { IOException.class }, expectedExceptionsMessageRegExp = "Pass Message test")
+    public void exceptionTestThree() throws Exception {
+        throw new IOException("Fail Message test");
+    }
+}
+-----------------------------Ignote/Disable-test----------------
+import java.io.IOException;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+public class DisableTestDemo 
+{
+    @Test(enabled = true)
+    public void testMethodOne() {
+        System.out.println("Test method one.");
+    }
+ 
+    @Test(enabled = false)
+    public void testMethodTwo() {
+        System.out.println("Test method two.");
+    }
+ 
+    @Test
+    public void testMethodThree() {
+        System.out.println("Test method three.");
+    }
+}
+----------------------------------------Dependent-TestNG----------
+public class ParentClassTest 
+{
+    @Test(dependsOnMethods = { "testTwo" })
+    public void testOne() {
+        System.out.println("Test method one");
+    }
+ 
+    @Test
+    public void testTwo() {
+        System.out.println("Test method two");
+    }
+}
+ 
+public class DependentTestExamples extends ParentClassTest
+{
+    @Test(dependsOnMethods = { "testOne" })
+    public void testThree() {
+        System.out.println("Test three method in Inherited test");
+    }
+ 
+    @Test
+    public void testFour() {
+        System.out.println("Test four method in Inherited test");
+    }
+}
+----------------------------------Dataprovider-single-class-------------------------------
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+ 
+public class SameClassDataProvider 
+{
+    @DataProvider(name = "data-provider")
+    public Object[][] dataProviderMethod() {
+        return new Object[][] { { "data one" }, { "data two" } };
+    }
+ 
+    @Test(dataProvider = "data-provider")
+    public void testMethod(String data) {
+        System.out.println("Data is: " + data);
+    }
+}
+----------------------------------------------Dataprovider-split-in-classes--------
+import org.testng.annotations.DataProvider;
+ 
+public class DataProviderClass 
+{
+    @DataProvider(name = "data-provider")
+    public static Object[][] dataProviderMethod() 
+    {
+        return new Object[][] { { "data one" }, { "data two" } };
+    }
+}
+
+
+import org.testng.annotations.Test;
+ 
+public class TestClass 
+{
+    @Test(dataProvider = "data-provider", dataProviderClass = DataProviderClass.class)
+    public void testMethod(String data) 
+    {
+        System.out.println("Data is: " + data);
+    }
+}
+
+
+-----------------------Simple-factory-----------------------------------------------------------------
+import org.testng.annotations.Factory;
+import org.testng.annotations.Test;
+public class SimpleTestFactory 
+{
+    @Factory
+    public Object[] factoryMethod() {
+        return new Object[] { new SimpleTest(), new SimpleTest() };
+    }
+}
+
+import org.testng.annotations.Test;
+public class SimpleTest 
+{
+    @Test
+    public void simpleTest() {
+        System.out.println("Simple Test Method.");
+    }
+}
+ 
+--------------------------------------------Factory-with-parameter------------------------------
+import org.testng.annotations.Test;
+public class SimpleTest1
+{
+    private int param;
+ 
+    public SimpleTest1(int param) {
+        this.param = param;
+    }
+ 
+    @Test
+    public void testMethodOne() {
+        int opValue = param + 1;
+        System.out.println("Test method one output: " + opValue);
+    }
+ 
+    @Test
+    public void testMethodTwo() {
+        int opValue = param + 2;
+        System.out.println("Test method two output: " + opValue);
+    }
+}
+
+import org.testng.annotations.Factory;
+import org.testng.annotations.Test;
+public class SimpleTestFactory1 {
+	
+    @Factory
+    public Object[] factoryMethod() {
+        return new Object[] { new SimpleTest1(0), new SimpleTest1(1) };
+    }
+
+}
+--------------------------------------------------------------Timeout---------
+import java.io.IOException;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+public class TimeoutSuite 
+{
+	@Test
+    public void timeTestOne() throws InterruptedException {
+        Thread.sleep(1000);
+        System.out.println("Time test method one");
+    }
+ 
+    @Test
+    public void timeTestTwo() throws InterruptedException {
+        Thread.sleep(400);
+        System.out.println("Time test method two");
+    }
+}
+#####Create new xml file as testng.xml and add below content############################
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Time test Suite" time-out="500" verbose="1" >
+  <test name="Timeout Test" >
+    <classes>
+      <class name="TimeoutSuite" />
+    </classes>
+  </test>
+</suite>
+
+----------------------parameterization------------------------------------------
+
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+ 
+public class ParameterTest {
+    /**
+     * Following method takes one parameter as input. Value of the 
+     * said parameter is defined at suite level.
+     */
+    @Parameters({ "suite-param" })
+    @Test
+    public void prameterTestOne(String param) {
+        System.out.println("Test one suite param is: " + param);
+    }
+ 
+    /**
+     * Following method takes one parameter as input. Value of the
+     * said parameter is defined at test level.
+     */
+    @Parameters({ "test-two-param" })
+    @Test
+    public void prameterTestTwo(String param) {
+        System.out.println("Test two param is: " + param);
+    }
+ 
+    /**
+     * Following method takes two parameters as input. Value of the 
+     * test parameter is defined at test level. The suite level 
+     * parameter is overridden at the test level.
+     */
+    @Parameters({ "suite-param", "test-three-param" })
+    @Test
+    public void prameterTestThree(String param, String paramTwo) {
+        System.out.println("Test three suite param is: " + param);
+        System.out.println("Test three param is: " + paramTwo);
+    }
+}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Parameter test Suite" verbose="1">
+    <!-- This parameter will be passed to every test in this suite -->
+    <parameter name="suite-param" value="suite level parameter" />
+    <test name="Parameter Test one">
+        <classes>
+            <class name="ParameterTest">
+                <methods>
+                    <include name="prameterTestOne" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Parameter Test two">
+        <!-- This parameter will be passed this test only -->
+        <parameter name="test-two-param" value="Test two parameter" />
+        <classes>
+            <class name="ParameterTest">
+                <methods>
+                    <include name="prameterTestTwo" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Parameter Test three">
+        <!-- Overriding suite level parameter -->
+        <parameter name="suite-param" value="overiding suite parameter" />
+        <!-- Test specific parameter -->
+        <parameter name="test-three-param" value="test three parameter" />
+        <classes>
+            <class name="ParameterTest">
+                <methods>
+                    <include name="prameterTestThree" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
+-------------------------------API testing------------ for post-- json payload---------------------------------
+{
+    "id": 11,
+    "name": "Clementina DuBuque1",
+    "username": "Moriah.Stanton1",
+    "email": "Rey.Padberg@karina.biz1",
+    "address": {
+      "street": "Kattie Turnpike1",
+      "suite": "Suite 1981",
+      "city": "Lebsackbury1",
+      "zipcode": "31428-22611",
+      "geo": {
+        "lat": "-38.2386",
+        "lng": "57.2232"
+      }
+    },
+    "phone": "124-648-3804",
+    "website": "ambrose.net1",
+    "company": {
+      "name": "Hoeger LLC1",
+      "catchPhrase": "Centralized empowering task-force1",
+      "bs": "target end-to-end models1"
+    }
+  }
+  
+  
+  ------------------------ for test cases----------------------
+  pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Check if user with id1 is Leanne Graham", function () {
+    var jsonData = pm.response.json();
+    pm.expect(jsonData[0].name).to.eql("Leanne Graham");
+});
+  
+-------------------------------parallel---------exec--in-testNG----------------------
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+ 
+public class ParallelMethodTest 
+{
+    @BeforeMethod
+    public void beforeMethod() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Before test-method. Thread id is: " + id);
+    }
+ 
+    @Test
+    public void testMethodsOne() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Simple test-method One. Thread id is: " + id);
+    }
+ 
+    @Test
+    public void testMethodsTwo() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Simple test-method Two. Thread id is: " + id);
+    }
+ 
+    @AfterMethod
+    public void afterMethod() {
+        long id = Thread.currentThread().getId();
+        System.out.println("After test-method. Thread id is: " + id);
+    }
+}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Test-method Suite" parallel="methods" thread-count="2" >
+  <test name="Test-method test" group-by-instances="true">
+    <classes>
+      <class name="ParallelMethodTest" />
+    </classes>
+  </test>
+</suite>
+-----------------------parallel classes----------------
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+public class ParallelClassesTestTwo 
+{
+    @BeforeClass
+    public void beforeClass() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Before test-class. Thread id is: " + id);
+    }
+ 
+    @Test
+    public void testMethodOne() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Sample test-method One. Thread id is: " + id);
+    }
+ 
+    @Test
+    public void testMethodTwo() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Sample test-method Two. Thread id is: " + id);
+    }
+ 
+    @AfterClass
+    public void afterClass() {
+        long id = Thread.currentThread().getId();
+        System.out.println("After test-class. Thread id is: " + id);
+    }
+}
+
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+public class ParallelClassesTestTwo 
+{
+    @BeforeClass
+    public void beforeClass() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Before test-class. Thread id is: " + id);
+    }
+ 
+    @Test
+    public void testMethodOne() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Sample test-method One. Thread id is: " + id);
+    }
+ 
+    @Test
+    public void testMethodTwo() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Sample test-method Two. Thread id is: " + id);
+    }
+ 
+    @AfterClass
+    public void afterClass() {
+        long id = Thread.currentThread().getId();
+        System.out.println("After test-class. Thread id is: " + id);
+    }
+}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Test-class Suite" parallel="classes" thread-count="2" >
+  <test name="Test-class test" >
+    <classes>
+      <class name="ParallelClassesTestOne" />
+      <class name="ParallelClassesTestTwo" />
+    </classes>
+  </test>
+</suite>
+
+-------------------------parallel suite-------------------
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+ 
+public class ParallelSuiteTest 
+{
+    String testName = "";
+ 
+    @BeforeTest
+    @Parameters({ "test-name" })
+    public void beforeTest(String testName) {
+        this.testName = testName;
+        long id = Thread.currentThread().getId();
+        System.out.println("Before test " + testName + ". Thread id is: " + id);
+    }
+ 
+    @BeforeClass
+    public void beforeClass() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Before test-class " + testName + ". Thread id is: "
+                + id);
+    }
+ 
+    @Test
+    public void testMethodOne() {
+        long id = Thread.currentThread().getId();
+        System.out.println("Sample test-method " + testName
+                + ". Thread id is: " + id);
+    }
+ 
+    @AfterClass
+    public void afterClass() {
+        long id = Thread.currentThread().getId();
+        System.out.println("After test-method  " + testName
+                + ". Thread id is: " + id);
+    }
+ 
+    @AfterTest
+    public void afterTest() {
+        long id = Thread.currentThread().getId();
+        System.out.println("After test  " + testName + ". Thread id is: " + id);
+    }
+}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Test-class Suite" parallel="tests" thread-count="2">
+    <test name="Test-class test 1">
+        <parameter name="test-name" value="test-method One" />
+        <classes>
+            <class name="ParallelSuiteTest" />
+        </classes>
+    </test>
+    <test name="Test-class test 2">
+        <parameter name="test-name" value="test-method One" />
+        <classes>
+            <class name="ParallelSuiteTest" />
+        </classes>
+    </test>
+</suite>
+--------------------------------------
+public class IndependentTest 
+{
+    @Test(threadPoolSize = 3, invocationCount = 6, timeOut = 1000)
+    public void testMethod() 
+    {
+        Long id = Thread.currentThread().getId();
+        System.out.println("Test method executing on thread with id: " + id);
+    }
+}
+
+
+<suite name="Independent test Suite" >
+  <test name="Independent test">
+    <classes>
+     <class name="IndependentTest" />
+    </classes>
+  </test>
+</suite>
+------------------------------------BDD--cucumber-------------------
+#############Featurefile........
+Feature: Is it Friday yet?
+  Everybody wants to know when it's Friday
+
+  Scenario: Sunday isn't Friday
+    Given today is Sunday
+    When I ask whether it's Friday yet
+    Then I should be told "Nope"
+	
+
+-------------
+
+package hellocucumber;
+
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+
+import static org.junit.Assert.*;
+
+
+class IsItFriday {
+    static String isItFriday(String today) {
+        //return null;
+		return "Nope";
+    }
+}
+
+public class StepDefinitions {
+	private String today;
+    private String actualAnswer;
+	
+	@Given("today is Sunday")
+public void today_is_sunday() {
+    // Write code here that turns the phrase above into concrete actions
+    //throw new io.cucumber.java.PendingException();
+	 today = "Sunday";
+}
+
+@When("I ask whether it's Friday yet")
+public void i_ask_whether_it_s_friday_yet() {
+    // Write code here that turns the phrase above into concrete actions
+    //throw new io.cucumber.java.PendingException();
+	actualAnswer = IsItFriday.isItFriday(today);
+}
+
+@Then("I should be told {string}")
+public void i_should_be_told(String expectedAnswer) {
+    // Write code here that turns the phrase above into concrete actions
+    //throw new io.cucumber.java.PendingException();
+	assertEquals(expectedAnswer , actualAnswer);
+}
+
+}
