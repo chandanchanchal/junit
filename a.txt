@@ -806,3 +806,22 @@ public class ParallelSuiteTest
         </classes>
     </test>
 </suite>
+--------------------------------------
+public class IndependentTest 
+{
+    @Test(threadPoolSize = 3, invocationCount = 6, timeOut = 1000)
+    public void testMethod() 
+    {
+        Long id = Thread.currentThread().getId();
+        System.out.println("Test method executing on thread with id: " + id);
+    }
+}
+
+
+<suite name="Independent test Suite" >
+  <test name="Independent test">
+    <classes>
+     <class name="IndependentTest" />
+    </classes>
+  </test>
+</suite>
